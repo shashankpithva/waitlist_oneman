@@ -4,3 +4,9 @@ node_modules/
 .env.local
 .env*.local
 tsconfig.tsbuildinfo
+
+# OS files
+.DS_Store
+
+# Local waitlist storage (swap for a real DB in production)
+/data/

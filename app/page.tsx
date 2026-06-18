@@ -9,6 +9,8 @@ import { MetalButton } from "@/components/metal-button";
 export default function WaitlistPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
 
@@ -36,18 +38,45 @@ export default function WaitlistPage() {
     );
   }, [submitted]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || submitted) return;
+    const trimmed = email.trim();
+    if (!trimmed || loading || submitted) return;
 
-    gsap.to(formRef.current, {
-      opacity: 0,
-      y: -8,
-      filter: "blur(4px)",
-      duration: 0.35,
-      ease: "power2.inOut",
-      onComplete: () => setSubmitted(true),
-    });
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(
+          (data && data.error) || "Something went wrong. Please try again."
+        );
+      }
+
+      // Email saved server-side — animate the form out, then show success.
+      gsap.to(formRef.current, {
+        opacity: 0,
+        y: -8,
+        filter: "blur(4px)",
+        duration: 0.35,
+        ease: "power2.inOut",
+        onComplete: () => setSubmitted(true),
+      });
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,9 +90,15 @@ export default function WaitlistPage() {
             alt=""
             fill
             priority
+            sizes="100vw"
             className="object-cover w-full h-screen"
           />
         </div>
+        {/* Vignette + grain layers (styles live in globals.css) */}
+        <div className="vignette-sides" />
+        <div className="vignette-bottom" />
+        <div className="vignette-top" />
+        <div className="grain-overlay" />
       </div>
 
       {/* Page corner marks */}
@@ -118,18 +153,32 @@ export default function WaitlistPage() {
               <span className="crosshair crosshair-bl">+</span>
               <span className="crosshair crosshair-br">+</span>
               <form onSubmit={handleSubmit} className="form-row">
+                <label htmlFor="waitlist-email" className="sr-only">
+                  Your email
+                </label>
                 <input
+                  id="waitlist-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
                   required
+                  disabled={loading}
+                  autoComplete="email"
                   className="email-input"
                 />
-                <MetalButton type="submit" className="submit-btn">
-                  Join the waitlist!
+                <MetalButton type="submit" className="submit-btn" disabled={loading}>
+                  {loading ? "Joining..." : "Join the waitlist!"}
                 </MetalButton>
               </form>
+              {error && (
+                <p
+                  role="alert"
+                  className="mt-3 text-center font-mono text-[11px] tracking-wide text-red-400"
+                >
+                  {error}
+                </p>
+              )}
             </div>
           )}
         </div>
