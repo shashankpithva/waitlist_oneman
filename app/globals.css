@@ -1,0 +1,346 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background-color: #080808;
+  color: #fff;
+  font-family: var(--font-manrope), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Background layer ── */
+.vignette-sides {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    #080808 0%,
+    transparent 14%,
+    transparent 86%,
+    #080808 100%
+  );
+}
+.vignette-bottom {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 55% at 50% 100%,
+    transparent 0%,
+    #080808 68%
+  );
+}
+.vignette-top {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, #080808 0%, transparent 22%);
+}
+
+/* ── Page corner marks ── */
+.corner-mark {
+  position: fixed;
+  z-index: 50;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.25);
+  line-height: 1;
+}
+.corner-tl { top: 18px; left: 18px; }
+.corner-tr { top: 18px; right: 18px; }
+.corner-bl { bottom: 18px; left: 18px; }
+.corner-br { bottom: 18px; right: 18px; }
+
+/* ── Logo ── */
+.logo-img { border-radius: 10px; }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.025);
+  margin-bottom: 36px;
+}
+.badge-text {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.07em;
+}
+
+/* ── Heading ── */
+@keyframes gradient-slide {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.page-heading {
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(36px, 5.5vw, 64px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-align: center;
+  margin-bottom: 20px;
+  background: linear-gradient(
+    to right,
+    #555555 0%,
+    #909090 30%,
+    #ffffff 50%,
+    #909090 70%,
+    #555555 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: repeat-x;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-slide 6s linear infinite;
+}
+
+/* ── Sub-text ── */
+.page-subtext {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(13px, 1.6vw, 16px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.7;
+  text-align: center;
+  max-width: 390px;
+  margin-bottom: 48px;
+}
+
+/* ── Waitlist form ── */
+.form-outer {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-row {
+  display: flex;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.email-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 18px 22px;
+  color: #fff;
+  caret-color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.13);
+}
+.email-input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* layout shell — keeps the button flush in the form row */
+.submit-btn {
+  flex-shrink: 0;
+  border: none;
+  white-space: nowrap;
+}
+
+/* ── Metallic button ── */
+.metal-btn {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  padding: 18px 26px;
+  color: #1a1a1a;
+  border: none;
+  white-space: nowrap;
+  background: linear-gradient(
+    158deg,
+    #a0a8b4 0%,
+    #c6ced8 14%,
+    #e0e8f0 28%,
+    #f2f6fa 40%,
+    #ffffff 50%,
+    #eef2f6 58%,
+    #d6dfe8 70%,
+    #bac4ce 84%,
+    #c6ced6 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(180, 200, 220, 0.3),
+    0 0 20px rgba(170, 195, 220, 0.25),
+    0 0 45px rgba(140, 165, 190, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.4s ease, filter 0.4s ease;
+}
+.metal-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.12) 75%,
+    transparent 100%
+  );
+  will-change: transform;
+  animation: metalSweep 3.2s linear infinite;
+}
+.metal-btn:hover {
+  box-shadow:
+    0 0 0 1px rgba(180, 200, 220, 0.45),
+    0 0 28px rgba(170, 195, 220, 0.4),
+    0 0 60px rgba(140, 165, 190, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  filter: brightness(1.06);
+}
+.metal-btn:active { filter: brightness(0.93); }
+
+@keyframes metalSweep {
+  0%   { transform: translateX(-200%); }
+  55%  { transform: translateX(380%); }
+  100% { transform: translateX(380%); }
+}
+
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 130px;
+  opacity: 0.2;
+  mix-blend-mode: multiply;
+}
+
+/* ── Crosshair corner marks (form) ── */
+.crosshair {
+  position: absolute;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  z-index: 10;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1;
+}
+.crosshair-tl { top: -9px; left: -7px; }
+.crosshair-tr { top: -9px; right: -7px; }
+.crosshair-bl { bottom: -9px; left: -7px; }
+.crosshair-br { bottom: -9px; right: -7px; }
+
+/* ── Success message ── */
+.success-text {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.07em;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* ── Terminal window ── */
+.terminal-window {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 56px;
+  flex-grow: 1;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+  background: #161618;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.terminal-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: #1c1c1f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.terminal-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+}
+.terminal-dot-red   { background: #ff5f57; }
+.terminal-dot-yellow { background: #febc2e; }
+.terminal-dot-green { background: #28c840; }
+
+.terminal-body {
+  padding: 20px 22px 40px;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #c0c0c0;
+}
+.terminal-muted   { color: rgba(255, 255, 255, 0.38); }
+.terminal-prompt  { color: #4ade96; }
+.terminal-output  { color: #e2e2e2; }
+
+.terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 13px;
+  background: #d0d0d0;
+  vertical-align: text-bottom;
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+
+@media (max-width: 640px) {
+  .terminal-window {
+    flex-grow: 0;
+    margin-top: 28px;
+    border-radius: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+  }
+  .terminal-titlebar {
+    padding: 9px 13px;
+    gap: 6px;
+  }
+  .terminal-dot {
+    width: 11px;
+    height: 11px;
+  }
+  .terminal-body {
+    padding: 14px 16px 18px;
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  .terminal-cursor {
+    width: 6px;
+    height: 11px;
+  }
+}
