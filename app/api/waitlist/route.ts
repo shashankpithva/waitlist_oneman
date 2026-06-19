@@ -13,7 +13,7 @@ const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
 
 // ── Brand constants (edit these to rebrand the email) ──
-const SITE_URL = "https://www.onemanhq.tech";
+const SITE_URL = "https://www.shashankpithva.app/";
 const LOGO_URL = "https://www.onemanhq.tech/onemanlogo.png";
 
 export async function POST(request: Request) {
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
           "",
           "We'll be in touch soon with early access and updates.",
           "",
-          "Visit us: " + SITE_URL,
+          "Visit our current work: " + SITE_URL,
           "",
           "\u2014 The Oneman team",
         ].join("\n"),
