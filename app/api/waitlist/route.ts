@@ -8,9 +8,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
-// Optional: a verified sender, e.g. "Oneman <hello@yourdomain.com>".
+// Optional: a verified sender, e.g. "Oneman <hello@onemanhq.tech>".
 // If unset, the confirmation email is skipped (the signup is still saved).
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
+
+// ── Brand constants (edit these to rebrand the email) ──
+const SITE_URL = "https://www.onemanhq.tech";
+const LOGO_URL = "https://www.onemanhq.tech/onemanlogo.png";
 
 export async function POST(request: Request) {
   // ── Parse body ──
@@ -76,28 +80,72 @@ export async function POST(request: Request) {
         from: RESEND_FROM_EMAIL,
         to: email,
         subject: "You're on the Oneman waitlist",
+        // Plain-text fallback (keep roughly in sync with the HTML below).
         text: [
-          "Thanks for joining the Oneman waitlist.",
+          "You're on the list.",
           "",
-          "Your first employee never sleeps \u2014 and we'll be in touch soon",
-          "with early access and updates.",
+          "Thanks for joining the Oneman waitlist. We're building the AI",
+          "co-founder that helps you run your company solo \u2014 your first",
+          "employee that never sleeps.",
+          "",
+          "We'll be in touch soon with early access and updates.",
+          "",
+          "Visit us: " + SITE_URL,
           "",
           "\u2014 The Oneman team",
         ].join("\n"),
+        // Dark, premium HTML email. All styles are inline (required for email).
         html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px; color: #1a1a1a;">
-            <h1 style="font-size: 22px; font-weight: 600; margin: 0 0 16px;">You're on the list.</h1>
-            <p style="font-size: 15px; line-height: 1.6; color: #444; margin: 0 0 16px;">
-              Thanks for joining the <strong>Oneman</strong> waitlist. Your first
-              employee never sleeps \u2014 and we'll be in touch soon with early
-              access and updates.
-            </p>
-            <p style="font-size: 14px; color: #888; margin: 24px 0 0;">\u2014 The Oneman team</p>
-          </div>
+  <body style="margin:0;padding:0;background-color:#0a0a0a;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#111111;border:1px solid #262626;border-radius:16px;overflow:hidden;">
+            <tr>
+              <td style="padding:40px 40px 0;text-align:center;">
+                <img src="${LOGO_URL}" alt="Oneman" width="56" height="56" style="display:inline-block;width:56px;height:auto;border:0;outline:none;" />
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px 40px 0;text-align:center;">
+                <h1 style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:24px;font-weight:600;letter-spacing:-0.4px;color:#ffffff;">You're on the list.</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:18px 40px 0;text-align:center;">
+                <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#a1a1aa;">
+                  Thanks for joining the <strong style="color:#e4e4e7;">Oneman</strong> waitlist. We're building the AI co-founder that helps you run your company solo &mdash; your first employee that never sleeps.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 40px 0;text-align:center;">
+                <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#a1a1aa;">
+                  We'll be in touch soon with early access and updates.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:32px 40px 8px;text-align:center;">
+                <a href="${SITE_URL}" style="display:inline-block;background-color:#ffffff;color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;text-decoration:none;padding:13px 28px;border-radius:9999px;">Visit website</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:32px 40px 40px;text-align:center;">
+                <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#52525b;border-top:1px solid #1f1f1f;padding-top:24px;">
+                  &mdash; The Oneman team
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
         `,
       });
 
-      // Don't fail the signup if the welcome email bounces — just log it.
+      // Don't fail the signup if the welcome email bounces \u2014 just log it.
       if (emailError) {
         console.error("Failed to send confirmation email:", emailError);
       }
