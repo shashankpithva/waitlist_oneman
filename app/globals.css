@@ -14,30 +14,34 @@ body {
 }
 
 /* ── Background layer ── */
+/* These layers only darken the edges so the background image stays visible
+   behind the hero text. Keep them as soft fades — never fully opaque in the
+   center, or the image disappears. */
 .vignette-sides {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to right,
     #080808 0%,
-    transparent 14%,
-    transparent 86%,
+    transparent 20%,
+    transparent 80%,
     #080808 100%
   );
 }
 .vignette-bottom {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse 90% 55% at 50% 100%,
-    transparent 0%,
-    #080808 68%
+  background: linear-gradient(
+    to top,
+    #080808 0%,
+    rgba(8, 8, 8, 0.45) 28%,
+    transparent 62%
   );
 }
 .vignette-top {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, #080808 0%, transparent 22%);
+  background: linear-gradient(to bottom, #080808 0%, transparent 32%);
 }
 
 /* ── Page corner marks ── */
