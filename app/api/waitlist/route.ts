@@ -16,8 +16,8 @@ const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
 const SITE_URL = "https://www.shashankpithva.app/";
 const LOGO_URL = "https://www.onemanhq.tech/onemanlogo.png";
 // ── Social links (TODO: replace with your real URLs) ──
-const TWITTER_URL = "https://x.com/yourhandle";
-const LINKEDIN_URL = "https://www.linkedin.com/in/yourprofile";
+const TWITTER_URL = "https://x.com/onemanhq";
+const LINKEDIN_URL = "https://www.linkedin.com/in/shashankpithva";
 
 export async function POST(request: Request) {
   // ── Parse body ──
