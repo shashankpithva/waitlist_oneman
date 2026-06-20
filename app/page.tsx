@@ -7,8 +7,8 @@ import Lenis from "lenis";
 import { MetalButton } from "@/components/metal-button";
 
 // ── Social links (TODO: replace with your real URLs) ──
-const TWITTER_URL = "https://x.com/yourhandle";
-const LINKEDIN_URL = "https://www.linkedin.com/in/yourprofile";
+const TWITTER_URL = "https://x.com/onemanhq";
+const LINKEDIN_URL = "https://www.linkedin.com/in/shashankpithva";
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState("");
