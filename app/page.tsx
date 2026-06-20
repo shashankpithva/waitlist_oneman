@@ -115,16 +115,11 @@ export default function WaitlistPage() {
           <Image
             src="/onemanlogo.png"
             alt="Oneman"
-            width={54}
-            height={54}
+            width={72}
+            height={72}
             className="logo-img"
             priority
           />
-        </div>
-
-        {/* Badge */}
-        <div className="badge">
-          <span className="badge-text">ai that runs your company</span>
         </div>
 
         {/* Heading */}
