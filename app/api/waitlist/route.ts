@@ -15,6 +15,9 @@ const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
 // ── Brand constants (edit these to rebrand the email) ──
 const SITE_URL = "https://www.shashankpithva.app/";
 const LOGO_URL = "https://www.onemanhq.tech/onemanlogo.png";
+// ── Social links (TODO: replace with your real URLs) ──
+const TWITTER_URL = "https://x.com/yourhandle";
+const LINKEDIN_URL = "https://www.linkedin.com/in/yourprofile";
 
 export async function POST(request: Request) {
   // ── Parse body ──
@@ -95,6 +98,10 @@ export async function POST(request: Request) {
           "",
           "Visit our current work: " + SITE_URL,
           "",
+          "Follow along:",
+          "Twitter / X: " + TWITTER_URL,
+          "LinkedIn: " + LINKEDIN_URL,
+          "",
           "\u2014 The Oneman team",
         ].join("\n"),
         // Dark, premium HTML email. All styles are inline (required for email).
@@ -134,7 +141,14 @@ export async function POST(request: Request) {
               </td>
             </tr>
             <tr>
-              <td style="padding:32px 40px 40px;text-align:center;">
+              <td style="padding:28px 40px 0;text-align:center;">
+                <a href="${TWITTER_URL}" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;font-weight:500;color:#a1a1aa;text-decoration:none;">Twitter / X</a>
+                <span style="color:#3f3f46;font-size:13px;">&nbsp;&middot;&nbsp;</span>
+                <a href="${LINKEDIN_URL}" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;font-weight:500;color:#a1a1aa;text-decoration:none;">LinkedIn</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 40px 40px;text-align:center;">
                 <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#52525b;border-top:1px solid #1f1f1f;padding-top:24px;">
                   &mdash; The Oneman team
                 </p>
