@@ -337,6 +337,8 @@ body {
 .terminal-output  { color: #e2e2e2; }
 .terminal-dim     { color: #8a8a8a; }
 .terminal-comment { color: rgba(120, 170, 255, 0.6); }
+.terminal-think   { color: #e0b15e; font-style: italic; }
+.terminal-task    { color: #6fd3c7; }
 
 .terminal-cursor {
   display: inline-block;
