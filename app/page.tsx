@@ -9,7 +9,8 @@ import { MetalButton } from "@/components/metal-button";
 const TWITTER_URL = "https://x.com/yourhandle";
 const LINKEDIN_URL = "https://www.linkedin.com/in/yourprofile";
 
-type TermLine = { id: number; kind: "muted" | "command" | "output" | "dim" | "comment"; text: string };
+type LineKind = "muted" | "command" | "output" | "dim" | "comment" | "think" | "task";
+type TermLine = { id: number; kind: LineKind; text: string };
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState("");
@@ -34,12 +35,12 @@ export default function WaitlistPage() {
     let cancelled = false;
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-    const addLine = (kind: TermLine["kind"], text: string) => {
+    const addLine = (kind: LineKind, text: string) => {
       const id = ++idRef.current;
       setLines((prev) => [...prev, { id, kind, text }]);
     };
 
-    const typeLine = async (kind: TermLine["kind"], full: string, perChar = 30) => {
+    const typeLine = async (kind: LineKind, full: string, perChar = 30) => {
       const id = ++idRef.current;
       setLines((prev) => [...prev, { id, kind, text: "" }]);
       let cur = "";
@@ -51,14 +52,31 @@ export default function WaitlistPage() {
       }
     };
 
-    // command -> in-progress -> result helper
-    const task = async (cmd: string, working: string, done: string) => {
-      await typeLine("command", cmd);
-      await sleep(350);
-      addLine("dim", working);
+    // One full autonomous cycle: research -> decide -> create tasks -> execute -> done
+    const cycle = async (
+      research: string,
+      decision: string,
+      tasks: string[],
+      result: string
+    ) => {
+      addLine("dim", "→ researching: " + research + "...");
+      await sleep(1150);
+      addLine("output", "✓ research complete");
+      await sleep(500);
+      addLine("think", "◈ decided: " + decision);
       await sleep(950);
-      addLine("output", done);
-      await sleep(900);
+      addLine("dim", "→ creating tasks...");
+      await sleep(550);
+      for (const t of tasks) {
+        if (cancelled) return;
+        addLine("task", "  [+] " + t);
+        await sleep(480);
+      }
+      await sleep(450);
+      addLine("dim", "→ executing...");
+      await sleep(1250);
+      addLine("output", "✓ done · " + result);
+      await sleep(1400);
     };
 
     async function run() {
@@ -68,48 +86,60 @@ export default function WaitlistPage() {
         addLine("muted", "Last login: Wed Mar 18 09:14:22 on ttys000");
         await sleep(550);
 
-        await typeLine("command", "whatis oneman");
+        await typeLine("command", "oneman start");
         await sleep(350);
-        addLine("output", "Oneman — your AI co-founder.");
-        addLine("comment", "# It runs the busywork of your company so one");
-        addLine("comment", "# person can operate like an entire team.");
-        await sleep(1500);
+        addLine("output", "Oneman — your autonomous AI co-founder.");
+        addLine("comment", "# Give it your company and your goal.");
+        addLine("comment", "# It researches, plans, and executes — on its own.");
+        await sleep(1600);
 
-        await typeLine("command", "oneman run --daily");
-        await sleep(350);
-        addLine("dim", "→ booting agents...");
+        await typeLine("command", "oneman ingest");
+        await sleep(300);
+        addLine("dim", "→ learning your company...");
         await sleep(850);
-        addLine("output", "✓ 4 agents online: Sales · Ops · Research · Scheduling");
-        await sleep(1100);
+        addLine("output", "✓ Company: Acme · B2B SaaS · pre-launch");
+        addLine("output", "✓ Goal: land the first 100 paying customers");
+        await sleep(1300);
 
-        await task(
-          "draft outreach email to 50 leads",
-          "→ researching leads · personalising copy...",
-          "✓ 50 emails drafted & sent."
-        );
-        await task(
-          "schedule investor call for thursday",
-          "→ checking 3 calendars...",
-          "✓ Invite sent · Thu 2:00 PM."
-        );
-        await task(
-          "summarise this week's customer feedback",
-          "→ reading 128 messages...",
-          "✓ 6 themes found · report saved."
-        );
-        await task(
-          "post product update to twitter & linkedin",
-          "→ drafting · scheduling...",
-          "✓ Scheduled 10:00 AM across 2 channels."
-        );
-        await task(
-          "reconcile vendor invoices due this week",
-          "→ matching purchase orders...",
-          "✓ 3 invoices queued for approval."
+        addLine("comment", "# No more commands needed. Oneman takes over.");
+        await sleep(1300);
+
+        await cycle(
+          "how early SaaS startups land their first customers",
+          "run a founder-led outreach campaign",
+          [
+            "compile 200 ICP-matched leads",
+            "write a 3-step outreach sequence",
+            "send & track replies",
+          ],
+          "147 contacted · 23 replies · 9 demos booked"
         );
 
+        await cycle(
+          "what makes B2B demos actually convert",
+          "build a tailored demo + follow-up flow",
+          [
+            "generate a custom demo deck",
+            "schedule the 9 demos",
+            "set automatic follow-ups",
+          ],
+          "9 demos scheduled · follow-ups automated"
+        );
+
+        await cycle(
+          "pricing models for pre-launch SaaS",
+          "ship a pricing page with checkout",
+          [
+            "draft 3 pricing tiers",
+            "build the checkout flow",
+            "publish the pricing page",
+          ],
+          "pricing page live · checkout active"
+        );
+
+        addLine("think", "◈ goal progress: 14 / 100 customers — and climbing");
         addLine("comment", "# One person. One AI. Infinite leverage.");
-        await sleep(3200);
+        await sleep(3400);
       }
     }
 
@@ -180,32 +210,20 @@ export default function WaitlistPage() {
         </p>
       );
     }
-    if (l.kind === "muted") {
-      return (
-        <p key={l.id} className="terminal-muted">
-          {l.text}
-          {cursor}
-        </p>
-      );
-    }
-    if (l.kind === "dim") {
-      return (
-        <p key={l.id} className="terminal-dim">
-          {l.text}
-          {cursor}
-        </p>
-      );
-    }
-    if (l.kind === "comment") {
-      return (
-        <p key={l.id} className="terminal-comment">
-          {l.text}
-          {cursor}
-        </p>
-      );
-    }
+    const cls =
+      l.kind === "muted"
+        ? "terminal-muted"
+        : l.kind === "dim"
+        ? "terminal-dim"
+        : l.kind === "comment"
+        ? "terminal-comment"
+        : l.kind === "think"
+        ? "terminal-think"
+        : l.kind === "task"
+        ? "terminal-task"
+        : "terminal-output";
     return (
-      <p key={l.id} className="terminal-output">
+      <p key={l.id} className={cls}>
         {l.text}
         {cursor}
       </p>
@@ -336,13 +354,13 @@ export default function WaitlistPage() {
           </a>
         </div>
 
-        {/* Terminal window — self-running explainer (scrolls internally) */}
+        {/* Terminal window — self-running autonomous explainer (scrolls internally) */}
         <div className="terminal-window">
           <div className="terminal-titlebar">
             <span className="terminal-dot terminal-dot-red" />
             <span className="terminal-dot terminal-dot-yellow" />
             <span className="terminal-dot terminal-dot-green" />
-            <span className="terminal-title">oneman — live demo</span>
+            <span className="terminal-title">oneman — working autonomously</span>
           </div>
           <div className="terminal-body" ref={bodyRef}>
             {lines.map((l, i) => renderLine(l, i === lines.length - 1))}
