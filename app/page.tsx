@@ -3,12 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import Lenis from "lenis";
 import { MetalButton } from "@/components/metal-button";
 
 // ── Social links (TODO: replace with your real URLs) ──
-const TWITTER_URL = "https://x.com/onemanhq";
-const LINKEDIN_URL = "https://www.linkedin.com/in/shashankpithva";
+const TWITTER_URL = "https://x.com/yourhandle";
+const LINKEDIN_URL = "https://www.linkedin.com/in/yourprofile";
+
+type TermLine = { id: number; kind: "muted" | "command" | "output" | "dim" | "comment"; text: string };
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState("");
@@ -18,17 +19,103 @@ export default function WaitlistPage() {
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
 
+  // ── Terminal explainer animation ──
+  const [lines, setLines] = useState<TermLine[]>([]);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const idRef = useRef(0);
+
+  // Keep the terminal pinned to the latest line as content streams in.
   useEffect(() => {
-    const lenis = new Lenis({ duration: 1.2 });
-    let raf: number;
-    const tick = (time: number) => {
-      lenis.raf(time);
-      raf = requestAnimationFrame(tick);
+    const el = bodyRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [lines]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const addLine = (kind: TermLine["kind"], text: string) => {
+      const id = ++idRef.current;
+      setLines((prev) => [...prev, { id, kind, text }]);
     };
-    raf = requestAnimationFrame(tick);
+
+    const typeLine = async (kind: TermLine["kind"], full: string, perChar = 30) => {
+      const id = ++idRef.current;
+      setLines((prev) => [...prev, { id, kind, text: "" }]);
+      let cur = "";
+      for (const ch of full) {
+        if (cancelled) return;
+        cur += ch;
+        setLines((prev) => prev.map((l) => (l.id === id ? { ...l, text: cur } : l)));
+        await sleep(perChar);
+      }
+    };
+
+    // command -> in-progress -> result helper
+    const task = async (cmd: string, working: string, done: string) => {
+      await typeLine("command", cmd);
+      await sleep(350);
+      addLine("dim", working);
+      await sleep(950);
+      addLine("output", done);
+      await sleep(900);
+    };
+
+    async function run() {
+      while (!cancelled) {
+        setLines([]);
+        await sleep(500);
+        addLine("muted", "Last login: Wed Mar 18 09:14:22 on ttys000");
+        await sleep(550);
+
+        await typeLine("command", "whatis oneman");
+        await sleep(350);
+        addLine("output", "Oneman — your AI co-founder.");
+        addLine("comment", "# It runs the busywork of your company so one");
+        addLine("comment", "# person can operate like an entire team.");
+        await sleep(1500);
+
+        await typeLine("command", "oneman run --daily");
+        await sleep(350);
+        addLine("dim", "→ booting agents...");
+        await sleep(850);
+        addLine("output", "✓ 4 agents online: Sales · Ops · Research · Scheduling");
+        await sleep(1100);
+
+        await task(
+          "draft outreach email to 50 leads",
+          "→ researching leads · personalising copy...",
+          "✓ 50 emails drafted & sent."
+        );
+        await task(
+          "schedule investor call for thursday",
+          "→ checking 3 calendars...",
+          "✓ Invite sent · Thu 2:00 PM."
+        );
+        await task(
+          "summarise this week's customer feedback",
+          "→ reading 128 messages...",
+          "✓ 6 themes found · report saved."
+        );
+        await task(
+          "post product update to twitter & linkedin",
+          "→ drafting · scheduling...",
+          "✓ Scheduled 10:00 AM across 2 channels."
+        );
+        await task(
+          "reconcile vendor invoices due this week",
+          "→ matching purchase orders...",
+          "✓ 3 invoices queued for approval."
+        );
+
+        addLine("comment", "# One person. One AI. Infinite leverage.");
+        await sleep(3200);
+      }
+    }
+
+    run();
     return () => {
-      cancelAnimationFrame(raf);
-      lenis.destroy();
+      cancelled = true;
     };
   }, []);
 
@@ -65,7 +152,6 @@ export default function WaitlistPage() {
         );
       }
 
-      // Email saved server-side — animate the form out, then show success.
       gsap.to(formRef.current, {
         opacity: 0,
         y: -8,
@@ -83,8 +169,51 @@ export default function WaitlistPage() {
     }
   };
 
+  const renderLine = (l: TermLine, isLast: boolean) => {
+    const cursor = isLast ? <span className="terminal-cursor" /> : null;
+    if (l.kind === "command") {
+      return (
+        <p key={l.id}>
+          <span className="terminal-prompt">oneman:~ $</span>
+          {" " + l.text}
+          {cursor}
+        </p>
+      );
+    }
+    if (l.kind === "muted") {
+      return (
+        <p key={l.id} className="terminal-muted">
+          {l.text}
+          {cursor}
+        </p>
+      );
+    }
+    if (l.kind === "dim") {
+      return (
+        <p key={l.id} className="terminal-dim">
+          {l.text}
+          {cursor}
+        </p>
+      );
+    }
+    if (l.kind === "comment") {
+      return (
+        <p key={l.id} className="terminal-comment">
+          {l.text}
+          {cursor}
+        </p>
+      );
+    }
+    return (
+      <p key={l.id} className="terminal-output">
+        {l.text}
+        {cursor}
+      </p>
+    );
+  };
+
   return (
-    <main className="relative min-h-screen w-full flex flex-col items-center overflow-hidden bg-[#080808]">
+    <main className="relative h-screen w-full flex flex-col items-center overflow-hidden bg-[#080808]">
 
       {/* Background staircase */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
@@ -98,7 +227,6 @@ export default function WaitlistPage() {
             className="object-cover w-full h-screen"
           />
         </div>
-        {/* Vignette + grain layers (styles live in globals.css) */}
         <div className="vignette-sides" />
         <div className="vignette-bottom" />
         <div className="vignette-top" />
@@ -112,10 +240,10 @@ export default function WaitlistPage() {
       <span className="corner-mark corner-br">+</span>
 
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center pt-14 pb-0 flex-1">
+      <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center pt-12 pb-0 flex-1 min-h-0">
 
         {/* Logo */}
-        <div className="mb-7">
+        <div className="mb-6">
           <Image
             src="/onemanlogo.png"
             alt="Oneman"
@@ -183,7 +311,7 @@ export default function WaitlistPage() {
         </div>
 
         {/* Social links — just under the waitlist form */}
-        <div className="mt-6 flex items-center justify-center gap-5">
+        <div className="mt-5 flex items-center justify-center gap-5">
           <a
             href={TWITTER_URL}
             target="_blank"
@@ -208,30 +336,16 @@ export default function WaitlistPage() {
           </a>
         </div>
 
-        {/* Terminal window */}
+        {/* Terminal window — self-running explainer (scrolls internally) */}
         <div className="terminal-window">
           <div className="terminal-titlebar">
             <span className="terminal-dot terminal-dot-red" />
             <span className="terminal-dot terminal-dot-yellow" />
             <span className="terminal-dot terminal-dot-green" />
+            <span className="terminal-title">oneman — live demo</span>
           </div>
-          <div className="terminal-body">
-            <p className="terminal-muted">Last login: Wed Mar 18 18:23:40 on ttys00</p>
-            <p>
-              <span className="terminal-prompt">oneman:~ $</span>
-              {" draft outreach email to 50 leads"}
-            </p>
-            <p className="terminal-output">Writing personalised emails... sent to 50 contacts.</p>
-            <p>
-              <span className="terminal-prompt">oneman:~ $</span>
-              {" schedule investor call for thursday"}
-            </p>
-            <p className="terminal-output">Calendar updated. Invite sent to 3 investors.</p>
-            <p>
-              <span className="terminal-prompt">oneman:~ $</span>
-              {" "}
-              <span className="terminal-cursor" />
-            </p>
+          <div className="terminal-body" ref={bodyRef}>
+            {lines.map((l, i) => renderLine(l, i === lines.length - 1))}
           </div>
         </div>
       </div>
