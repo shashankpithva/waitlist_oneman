@@ -20,13 +20,14 @@ const spaceMono = Space_Mono({
   variable: "--font-space-mono",
 });
 
+// NOTE: The favicon is handled automatically by Next.js via app/icon.png.
+// Next serves it with a content hash in the URL, which permanently defeats
+// browser favicon caching. Do NOT add a manual `icons` entry pointing at
+// /onemanlogo.png — that reintroduces the stale-favicon problem.
 export const metadata: Metadata = {
   title: "Oneman",
   description:
     "Oneman gives solo founders the power of a full team. One person. One AI. Infinite leverage.",
-  icons: {
-    icon: "/onemanlogo.png",
-  },
 };
 
 export default function RootLayout({

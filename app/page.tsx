@@ -6,8 +6,8 @@ import gsap from "gsap";
 import { MetalButton } from "@/components/metal-button";
 
 // ── Social links (TODO: replace with your real URLs) ──
-const TWITTER_URL = "https://x.com/yourhandle";
-const LINKEDIN_URL = "https://www.linkedin.com/in/yourprofile";
+const TWITTER_URL = "https://x.com/Onemanhq";
+const LINKEDIN_URL = "https://linkedin.com/in/shashankpithva";
 
 type LineKind = "muted" | "command" | "output" | "dim" | "comment" | "think" | "task";
 type TermLine = { id: number; kind: LineKind; text: string };
